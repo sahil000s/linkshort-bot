@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Download Page</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 30px; }
+    #countdown { font-size: 20px; margin: 20px 0; }
+    #download-btn { 
+      padding: 12px 25px; 
+      background: #4CAF50; 
+      color: white; 
+      border: none; 
+      border-radius: 5px; 
+      cursor: pointer; 
+      font-size: 18px; 
+      display: none;
+    }
+  </style>
+  <!-- Adsterra ads (replace with your code) -->
+  <script type="text/javascript">
+    atOptions = {
+      'key' : 'YOUR_ADSTERRA_KEY',
+      'format' : 'iframe',
+      'height' : 60,
+      'width' : 468,
+      'params' : {}
+    };
+    document.write('<scr' + 'ipt type="text/javascript" src="//www.topdisplayformat.com/' + atOptions.key + '/invoke.js"></scr' + 'ipt>');
+  </script>
+</head>
+<body>
+  <h2 id="apk-name">Loading...</h2>
+  <div id="countdown">Please wait 5 seconds...</div>
+  <button id="download-btn">Download Now</button>
+
+  <script>
+    async function go() {
+      let code = window.location.pathname.replace("/", "");
+      if(!code) { document.body.innerHTML = "No code provided"; return; }
+
+      let resp = await fetch("links.json");
+      let data = await resp.json();
+
+      if(data[code]) {
+        let apk = data[code];
+        document.getElementById("apk-name").innerText = apk.name;
+
+        let seconds = 5;
+        let countdown = document.getElementById("countdown");
+        let btn = document.getElementById("download-btn");
+
+        let timer = setInterval(() => {
+          seconds--;
+          countdown.innerText = "Please wait " + seconds + " seconds...";
+          if(seconds <= 0) {
+            clearInterval(timer);
+            countdown.style.display = "none";
+            btn.style.display = "inline-block";
+            btn.onclick = () => window.location.href = apk.url;
+          }
+        }, 1000);
+      } else {
+        document.body.innerHTML = "Link not found!";
+      }
+    }
+    go();
+  </script>
+</body>
+</html>
